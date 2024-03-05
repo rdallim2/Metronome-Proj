@@ -6,43 +6,74 @@ class Metronome:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title('Metronome')
-        self.root.geometry("300x300")
+        self.root.geometry("300x500")
         self.root.configure(bg="white") 
         self.mainframe = tk.Frame(self.root)
         self.mainframe.pack(fill='both', expand=True)
 
+        # DEFAULT MET INFO
         self.bpm = 120  # Default BPM
         self.playing = False
-        self.audio_path = "/Users/ryandallimore/persprojects/met_sound.mp3"
+        self.weak_audio_path = "/Users/ryandallimore/persprojects/metronome_proj/met_sound.mp3"
+        self.strong_audio_path = "/Users/ryandallimore/persprojects/metronome_proj/strongbeat.mp3"
+        self.beat_count = 0
+        self.beats_in_measure = 4 
         self.after_id = None  # To store the after event ID
 
-        self.text = ttk.Label(self.mainframe, text='Metronome', background='white', font=("Brass Mono", 20))
+        #METRONOME LABEL: ROW 0
+        self.text = ttk.Label(self.mainframe, text='Metronome', background='white', font=("Brass Mono", 30))
         self.text.grid(row=0, column=0, pady=10)
 
-        self.set_text_field = ttk.Entry(self.mainframe)
-        self.set_text_field.grid(row=1, column=0, pady=10, sticky='NWES')
-        set_text_button = ttk.Button(self.mainframe, text='Set Tempo', command=self.set_tempo)
-        set_text_button.grid(row=2, column=0, pady=10)
+        #TEMPO BUTTON: ROWS 1/2
+        self.set_tempo_button = ttk.Button(self.mainframe, text='Set Tempo', command=self.set_tempo)
+        self.set_tempo_button.grid(row=1, column=0, pady=10)
+        self.tempo_entry= ttk.Entry(self.mainframe)
+        self.tempo_entry.grid(row=2, column=0, pady=10, sticky='NWES')
 
+        #TIMESIG ENTRY: ROWS 3/4
+        self.set_time_sig_button = ttk.Button(self.mainframe, text="Set Time Signature", command=self.set_time_sig)
+        self.set_time_sig_button.grid(row=3, column=0, pady=10)
+        self.time_sig_entry = ttk.Entry(self.mainframe)
+        self.time_sig_entry.grid(row=4, column=0, pady=10, sticky='NWES')
+
+        #START BUTTON: ROW 5
         self.start_button = ttk.Button(self.mainframe, text="Start", command=self.start_metronome)
-        self.start_button.grid(row=3, column=0, pady=10)
+        self.start_button.grid(row=5, column=0, pady=10)
 
+        #STOP BUTTON: ROW 6
         self.stop_button = ttk.Button(self.mainframe, text="Stop", command=self.stop_metronome)
-        self.stop_button.grid(row=4, column=0, pady=10)
+        self.stop_button.grid(row=6, column=0, pady=10)
 
+        
+
+
+        #INITIALIZER
         pygame.mixer.init()
 
     def set_tempo(self):
         try:
-            new_bpm = int(self.set_text_field.get())
+            new_bpm = int(self.tempo_entry.get())
             if new_bpm > 0:
                 self.bpm = new_bpm
         except ValueError:
             pass
 
+    def set_time_sig(self):
+        try:
+            time_sig_input = int(self.time_sig_entry.get())
+            self.beats_in_measure = time_sig_input
+        except ValueError:
+            pass
+
+
     def play_metronome(self):
-        pygame.mixer.music.load(self.audio_path)
+        if (self.beat_count+1) % (self.beats_in_measure) == 0:
+            pygame.mixer.music.load(self.strong_audio_path)
+        else:
+            pygame.mixer.music.load(self.weak_audio_path)
+        
         pygame.mixer.music.play(loops=0)
+        self.beat_count += 1
         self.after_id = self.root.after(int(60000 / self.bpm), self.play_metronome)
 
     def start_metronome(self):
