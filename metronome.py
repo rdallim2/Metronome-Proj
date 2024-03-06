@@ -67,7 +67,7 @@ class Metronome:
 
 
     def play_metronome(self):
-        if (self.beat_count+1) % (self.beats_in_measure) == 0:
+        if (self.beat_count) % (self.beats_in_measure) == 0:
             pygame.mixer.music.load(self.strong_audio_path)
         else:
             pygame.mixer.music.load(self.weak_audio_path)
