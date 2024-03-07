@@ -7,13 +7,16 @@ import customtkinter
 
 class Metronome:
     def __init__(self):
-        self.root = tk.Tk()
-        self.custom_root = customtkinter.CTk()
+        #self.root = tk.Tk()
+        self.root = customtkinter.CTk()
         self.root.title('Metronome')
-        self.root.geometry("300x500")
+        self.root.geometry("450x600")
+        self.root.resizable(0,0)
         self.root.configure(bg="white") 
         self.mainframe = tk.Frame(self.root)
         self.mainframe.pack(fill='both', expand=True)
+
+        self.mainframe.columnconfigure(0, weight=1)
 
         # DEFAULT MET INFO
         self.bpm = 120  # Default BPM
@@ -30,19 +33,19 @@ class Metronome:
         self.text.grid(row=0, column=0, pady=10)
 
         #TEMPO BUTTON: ROWS 1/2
-        #self.set_tempo_button = ttk.Button(self.mainframe, text='Set Tempo', command=self.set_tempo)
-        #self.set_tempo_button.grid(row=1, column=0, pady=10)
+        self.set_tempo_button = ttk.Button(self.mainframe, text='Set Tempo', command=self.set_tempo)
+        self.set_tempo_button.grid(row=1, column=0, pady=10)
         #self.tempo_entry= ttk.Entry(self.mainframe)
         #self.tempo_entry.grid(row=2, column=0, pady=10, sticky='NWES')
 
         #TEMPO SLIDER
-        self.tempo_slider = customtkinter.CTkSlider(self.custom_root, 
+        self.tempo_slider = customtkinter.CTkSlider(self.root, 
             from_=30,
             to=400,
-            command=self.sliding
+            command=self.set_tempo, 
             )
 
-        self.tempo_slider.grid(row=10, column=0, pady=10)
+        self.tempo_slider.pack(side='bottom', pady=10)
 
         #TIMESIG ENTRY: ROWS 3/4
         self.set_time_sig_button = ttk.Button(self.mainframe, text="Set Time Signature: ex-(a/b)", command=self.set_time_sig)
@@ -64,14 +67,14 @@ class Metronome:
         #INITIALIZER
         pygame.mixer.init()
 
-    def sliding(value):
-        pass
+    #def sliding(self, value):
+     #   command=self.set_tempo
+      #  pass
 
-    def set_tempo(self):
+    def set_tempo(self, value):
         try:
-            new_bpm = int(self.tempo_entry.get())
-            if new_bpm > 0:
-                self.bpm = new_bpm
+            new_bpm = int(self.tempo_slider.get())
+            self.bpm = new_bpm
         except ValueError:
             pass
 
