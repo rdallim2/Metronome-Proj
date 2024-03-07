@@ -3,23 +3,28 @@ from tkinter import ttk
 from fractions import Fraction 
 import pygame
 from tkinter import *
+from PIL import ImageTk, Image
 import customtkinter
 
 class Metronome:
     def __init__(self):
-        #self.root = tk.Tk()
-        self.root = customtkinter.CTk()
+        self.root = tk.Tk()
+        #self.root = customtkinter.CTk()
         self.root.title('Metronome')
         self.root.geometry("450x600")
         self.root.resizable(0,0)
-        self.root.configure(bg="white") 
+        self.root.configure() 
         self.mainframe = tk.Frame(self.root)
         self.mainframe.pack(fill='both', expand=True)
 
         self.mainframe.columnconfigure(0, weight=1)
 
+        self.style = ttk.Style()
+        self.style.configure("TScale", background="white", troughcolor="white")
+
+
         # DEFAULT MET INFO
-        self.bpm = 120  # Default BPM
+        self.bpm = 215  # Default BPM
         self.playing = False
         self.weak_audio_path = "/Users/ryandallimore/persprojects/metronome_proj/met_sound.mp3"
         self.strong_audio_path = "/Users/ryandallimore/persprojects/metronome_proj/strongbeat.mp3"
@@ -32,26 +37,16 @@ class Metronome:
         self.text = ttk.Label(self.mainframe, text='Metronome', background='white', font=("Brass Mono", 30))
         self.text.grid(row=0, column=0, pady=10)
 
-        #TEMPO BUTTON: ROWS 1/2
-        self.set_tempo_button = ttk.Button(self.mainframe, text='Set Tempo', command=self.set_tempo)
-        self.set_tempo_button.grid(row=1, column=0, pady=10)
-        #self.tempo_entry= ttk.Entry(self.mainframe)
-        #self.tempo_entry.grid(row=2, column=0, pady=10, sticky='NWES')
-
         #TEMPO SLIDER
-        self.tempo_slider = customtkinter.CTkSlider(self.root, 
+        self.tempo_slider = Scale(self.root, 
             from_=30,
             to=400,
-            command=self.set_tempo, 
+            orient=HORIZONTAL,
+            command=self.set_tempo,
             )
-
+        self.tempo_slider.set(215)
         self.tempo_slider.pack(side='bottom', pady=10)
 
-        #TIMESIG ENTRY: ROWS 3/4
-        self.set_time_sig_button = ttk.Button(self.mainframe, text="Set Time Signature: ex-(a/b)", command=self.set_time_sig)
-        self.set_time_sig_button.grid(row=3, column=0, pady=10)
-        self.time_sig_entry = ttk.Entry(self.mainframe)
-        self.time_sig_entry.grid(row=4, column=0, pady=10, sticky='NWES')
 
         #START BUTTON: ROW 5
         self.start_button = ttk.Button(self.mainframe, text="Start", command=self.start_metronome)
@@ -61,15 +56,8 @@ class Metronome:
         self.stop_button = ttk.Button(self.mainframe, text="Stop", command=self.stop_metronome)
         self.stop_button.grid(row=6, column=0, pady=10)
 
-        
-
-
         #INITIALIZER
         pygame.mixer.init()
-
-    #def sliding(self, value):
-     #   command=self.set_tempo
-      #  pass
 
     def set_tempo(self, value):
         try:
