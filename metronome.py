@@ -1,10 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
+from fractions import Fraction 
 import pygame
+from tkinter import *
+import customtkinter
 
 class Metronome:
     def __init__(self):
         self.root = tk.Tk()
+        self.custom_root = customtkinter.CTk()
         self.root.title('Metronome')
         self.root.geometry("300x500")
         self.root.configure(bg="white") 
@@ -16,6 +20,7 @@ class Metronome:
         self.playing = False
         self.weak_audio_path = "/Users/ryandallimore/persprojects/metronome_proj/met_sound.mp3"
         self.strong_audio_path = "/Users/ryandallimore/persprojects/metronome_proj/strongbeat.mp3"
+        
         self.beat_count = 0
         self.beats_in_measure = 4 
         self.after_id = None  # To store the after event ID
@@ -25,13 +30,22 @@ class Metronome:
         self.text.grid(row=0, column=0, pady=10)
 
         #TEMPO BUTTON: ROWS 1/2
-        self.set_tempo_button = ttk.Button(self.mainframe, text='Set Tempo', command=self.set_tempo)
-        self.set_tempo_button.grid(row=1, column=0, pady=10)
-        self.tempo_entry= ttk.Entry(self.mainframe)
-        self.tempo_entry.grid(row=2, column=0, pady=10, sticky='NWES')
+        #self.set_tempo_button = ttk.Button(self.mainframe, text='Set Tempo', command=self.set_tempo)
+        #self.set_tempo_button.grid(row=1, column=0, pady=10)
+        #self.tempo_entry= ttk.Entry(self.mainframe)
+        #self.tempo_entry.grid(row=2, column=0, pady=10, sticky='NWES')
+
+        #TEMPO SLIDER
+        self.tempo_slider = customtkinter.CTkSlider(self.custom_root, 
+            from_=30,
+            to=400,
+            command=self.sliding
+            )
+
+        self.tempo_slider.grid(row=10, column=0, pady=10)
 
         #TIMESIG ENTRY: ROWS 3/4
-        self.set_time_sig_button = ttk.Button(self.mainframe, text="Set Time Signature", command=self.set_time_sig)
+        self.set_time_sig_button = ttk.Button(self.mainframe, text="Set Time Signature: ex-(a/b)", command=self.set_time_sig)
         self.set_time_sig_button.grid(row=3, column=0, pady=10)
         self.time_sig_entry = ttk.Entry(self.mainframe)
         self.time_sig_entry.grid(row=4, column=0, pady=10, sticky='NWES')
@@ -50,6 +64,9 @@ class Metronome:
         #INITIALIZER
         pygame.mixer.init()
 
+    def sliding(value):
+        pass
+
     def set_tempo(self):
         try:
             new_bpm = int(self.tempo_entry.get())
@@ -61,6 +78,12 @@ class Metronome:
     def set_time_sig(self):
         try:
             time_sig_input = int(self.time_sig_entry.get())
+            time_sig = Fraction(time_sig_input)
+
+            numerator = time_sig.numerator
+            denominator = time_sig.denominator
+
+
             self.beats_in_measure = time_sig_input
         except ValueError:
             pass
@@ -84,6 +107,7 @@ class Metronome:
     def stop_metronome(self):
         if self.playing:
             self.playing = False
+            self.beat_count = 0
             if self.after_id is not None:
                 self.root.after_cancel(self.after_id)
                 self.after_id = None
