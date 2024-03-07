@@ -14,14 +14,25 @@ class Metronome:
         self.root.geometry("450x600")
         self.root.resizable(0,0)
         self.root.configure() 
-        self.mainframe = tk.Frame(self.root)
+        self.mainframe = ttk.Frame(self.root, style="Main.TFrame")
         self.mainframe.pack(fill='both', expand=True)
 
-        self.mainframe.columnconfigure(0, weight=1)
+        #ROWS AND COLUMNS
+        self.mainframe.columnconfigure((0, 1), weight=1)
+        self.mainframe.rowconfigure(0)
+        self.mainframe.rowconfigure(1, weight=1)
 
-        self.style = ttk.Style()
-        self.style.configure("TScale", background="white", troughcolor="white")
 
+        #STYLE
+        self.style = ttk.Style(self.root)
+        self.style.theme_use("clam")
+
+        self.style.configure("Main.TFrame", background="gray20")
+
+        self.style.configure("SS.TButton",
+            background="orange",
+            foreground="gray25"
+            ) 
 
         # DEFAULT MET INFO
         self.bpm = 215  # Default BPM
@@ -34,8 +45,8 @@ class Metronome:
         self.after_id = None  # To store the after event ID
 
         #METRONOME LABEL: ROW 0
-        self.text = ttk.Label(self.mainframe, text='Metronome', background='white', font=("Brass Mono", 30))
-        self.text.grid(row=0, column=0, pady=10)
+        self.text = ttk.Label(self.mainframe, text='Metronome', foreground='orange', font=("Brass Mono", 30))
+        self.text.grid(row=0, column=0, pady=10, columnspan=3)
 
         #TEMPO SLIDER
         self.tempo_slider = Scale(self.root, 
@@ -49,15 +60,20 @@ class Metronome:
 
 
         #START BUTTON: ROW 5
-        self.start_button = ttk.Button(self.mainframe, text="Start", command=self.start_metronome)
-        self.start_button.grid(row=5, column=0, pady=10)
+        self.start_button = ttk.Button(self.mainframe, text="Start", command=self.start_metronome, width=10, style="SS.TButton")
+        self.start_button.grid(row=6, column=0, pady=10, sticky='ew')
 
         #STOP BUTTON: ROW 6
-        self.stop_button = ttk.Button(self.mainframe, text="Stop", command=self.stop_metronome)
-        self.stop_button.grid(row=6, column=0, pady=10)
+        self.stop_button = ttk.Button(self.mainframe, text="Stop", command=self.stop_metronome, width=10, style="SS.TButton")
+        self.stop_button.grid(row=6, column=1, pady=10, sticky='ew')
 
         #INITIALIZER
         pygame.mixer.init()
+
+
+
+
+    #----------------------------------FUNCTIONS-----------------------------------------------------------------------
 
     def set_tempo(self, value):
         try:
