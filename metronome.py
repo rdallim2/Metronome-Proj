@@ -12,7 +12,7 @@ class Metronome:
         self.root = tk.Tk()
         #self.root = customtkinter.CTk()
         self.root.title('Metronome')
-        self.root.geometry("450x600")
+        self.root.geometry("900x1200")
         self.root.configure() 
         self.mainframe = ttk.Frame(self.root, style="Main.TFrame")
         self.mainframe.pack(fill='both', expand=True)
@@ -54,8 +54,13 @@ class Metronome:
         self.beats_in_measure = 4 
         self.after_id = None  # To store the after event ID
 
+        #-----------TIME-SIG TOGGLES
+
         self.accent_toggle = tk.IntVar(value=1)
         self.accent_toggle.set(1)
+
+        self.quarter_toggle = tk.IntVar(value=1)
+        self.quarter_toggle.set(1)
 
         #METRONOME LABEL: ROW 0
         self.text = ttk.Label(self.mainframe, text='Metronome', foreground='orange', background="gray26", font=("Brass Mono", 30))
@@ -118,7 +123,7 @@ class Metronome:
         self.accent_button = ttk.Button(self.mainframe, text=self.get_accent_button_text(), command=self.toggle_accent, style="Purple.TButton")
         self.accent_button.grid(row=5, column=0, sticky=tk.W+tk.E, columnspan=2)
 
-        self.quarter_button = ttk.Button(self.mainframe, text="1/4", command=self.toggle_subdivisions("1/4"), style="Purple.TButton")
+        self.quarter_button = ttk.Button(self.mainframe, text=self.get_quarter_button_text(), command=self.toggle_quarter, style="Purple.TButton")
         self.quarter_button.grid(row=5, column=3, sticky=tk.W+tk.E, columnspan=2)
 
         self.sixteen_e_button = ttk.Button(self.mainframe, text="e", command=self.toggle_subdivisions("16e"), style="Purple.TButton")
@@ -167,8 +172,14 @@ class Metronome:
 
 
     #----------------------------------FUNCTIONS-----------------------------------------------------------------------
+    
+    #------------------- TIME-SIG BUTTON TEXT CHANGE FUNCTIONS
     def get_accent_button_text(self):
         return "Strong Accent" if self.accent_toggle.get() == 1 else "No Accent"
+
+    def get_quarter_button_text(self):
+        return "'1/4': ON " if self.accent_toggle.get() == 1 else "'1/4': OFF"
+
 
     def toggle_accent(self):
         if self.accent_toggle.get() == 0:
@@ -177,6 +188,14 @@ class Metronome:
         else:
             self.accent_toggle.set(0)
             self.accent_button["text"] = "No Accent"
+
+    def toggle_quarter(self):
+        if self.quarter_toggle.get() == 0:
+            self.quarter_toggle.set(1)
+            self.quarter_button["text"] = "'1/4': ON"
+        else:
+            self.quarter_toggle.set(0)
+            self.quarter_button["text"] = "'1/4: OFF"
         
 
     def toggle_subdivisions(self, value):
@@ -210,21 +229,34 @@ class Metronome:
     def play_metronome(self):
         try:
             if self.playing:
+                volume = 1.0
+                sub_beats_per_beat = 4  # Adjust this based on your requirement
+
                 if self.accent_toggle.get() == 1:
-                    if (self.beat_count) % (self.beats_in_measure) == 0:
+                    if (self.beat_count * sub_beats_per_beat) % (self.beats_in_measure * sub_beats_per_beat) == 0:
                         pygame.mixer.music.load(self.strong_audio_path)
                     else:
-                        pygame.mixer.music.load(self.weak_audio_path)
+                        if self.quarter_toggle.get() == 1 and (self.beat_count * sub_beats_per_beat) % sub_beats_per_beat == 0:
+                            pygame.mixer.music.load(self.weak_audio_path)
+                        else:
+                            pygame.mixer.music.load(self.weak_audio_path)
+                            volume = 0.0
                 else:
-                    pygame.mixer.music.load(self.weak_audio_path)
+                    if self.quarter_toggle.get() == 1 and (self.beat_count * sub_beats_per_beat) % sub_beats_per_beat == 0:
+                        pygame.mixer.music.load(self.weak_audio_path)
+                    else:
+                        pygame.mixer.music.load(self.weak_audio_path)
+                        volume = 0.0
 
+                pygame.mixer.music.set_volume(volume)
                 pygame.mixer.music.play(loops=0)
                 self.beat_count += 1
-                self.after_id = self.root.after(int(60000 / self.bpm), self.play_metronome)
+                self.after_id = self.root.after(int(60000 / (self.bpm)), self.play_metronome)
 
         except Exception as e:
             print(f"An error occurred while playing the metronome: {e}")
-        
+
+
 
     def start_metronome(self):
         if not self.playing:
