@@ -62,6 +62,17 @@ class Metronome:
         self.quarter_toggle = tk.IntVar(value=1)
         self.quarter_toggle.set(1)
 
+        self.eighth_toggle = tk.IntVar(value=1)
+        self.eighth_toggle.set(0)
+
+        self.sixteenth_e_toggle = tk.IntVar(value=1)
+        self.sixteenth_e_toggle.set(0)
+
+        self.sixteenth_a_toggle = tk.IntVar(value=1)
+        self.sixteenth_a_toggle.set(0)
+
+
+
         #METRONOME LABEL: ROW 0
         self.text = ttk.Label(self.mainframe, text='Metronome', foreground='orange', background="gray26", font=("Brass Mono", 30))
         self.text.grid(row=0, column=5, pady=10, columnspan=2)
@@ -126,21 +137,14 @@ class Metronome:
         self.quarter_button = ttk.Button(self.mainframe, text=self.get_quarter_button_text(), command=self.toggle_quarter, style="Purple.TButton")
         self.quarter_button.grid(row=5, column=3, sticky=tk.W+tk.E, columnspan=2)
 
-        self.sixteen_e_button = ttk.Button(self.mainframe, text="e", command=self.toggle_subdivisions("16e"), style="Purple.TButton")
-        self.sixteen_e_button.grid(row=5, column=6, sticky=tk.W+tk.E)
+        self.eighth_button = ttk.Button(self.mainframe, text=self.get_eighth_button_text(), command=self.toggle_eighth, style="Purple.TButton")
+        self.eighth_button.grid(row=5, column=7, sticky=tk.W+tk.E)
 
-        self.sixteen_and_button = ttk.Button(self.mainframe, text="+", command=self.toggle_subdivisions("16and"), style="Purple.TButton")
-        self.sixteen_and_button.grid(row=5, column=7, sticky=tk.W+tk.E)
+        self.sixteenth_e_button = ttk.Button(self.mainframe, text=self.get_sixteenth_e_button_text(), command=self.toggle_sixteenth_e, style="Purple.TButton")
+        self.sixteenth_e_button.grid(row=5, column=8, sticky=tk.W+tk.E)
 
-        self.sixteen_a_button = ttk.Button(self.mainframe, text="a", command=self.toggle_subdivisions("16a"), style="Purple.TButton")
-        self.sixteen_a_button.grid(row=5, column=8, sticky=tk.W+tk.E)
-
-        self.eighth_trip_and_button = ttk.Button(self.mainframe, text="+", command=self.toggle_subdivisions("8tripand"), style="Purple.TButton")
-        self.eighth_trip_and_button.grid(row=5, column=10, sticky=tk.W+tk.E)
-
-        self.eighth_trip_a_button = ttk.Button(self.mainframe, text="a", command=self.toggle_subdivisions("8tripa"), style="Purple.TButton")
-        self.eighth_trip_a_button.grid(row=5, column=10, sticky=tk.W+tk.E)
-
+        self.sixteenth_a_button = ttk.Button(self.mainframe, text=self.get_sixteenth_a_button_text(), command=self.toggle_sixteenth_a, style="Purple.TButton")
+        self.sixteenth_a_button.grid(row=5, column=9, sticky=tk.W+tk.E)
         
         #-----------OTHER PAGE BUTTONS
 
@@ -178,7 +182,17 @@ class Metronome:
         return "Strong Accent" if self.accent_toggle.get() == 1 else "No Accent"
 
     def get_quarter_button_text(self):
-        return "'1/4': ON " if self.accent_toggle.get() == 1 else "'1/4': OFF"
+        return "'1/4': ON " if self.quarter_toggle.get() == 1 else "'1/4': OFF"
+
+    def get_eighth_button_text(self):
+        return "'+': ON " if self.eighth_toggle.get() == 1 else "'+': OFF"
+
+    def get_sixteenth_e_button_text(self):
+        return "'e': ON " if self.sixteenth_e_toggle.get() == 1 else "'e': OFF"
+
+    def get_sixteenth_a_button_text(self):
+        return "'a': ON " if self.sixteenth_a_toggle.get() == 1 else "'a': OFF"
+
 
 
     def toggle_accent(self):
@@ -197,13 +211,30 @@ class Metronome:
             self.quarter_toggle.set(0)
             self.quarter_button["text"] = "'1/4: OFF"
         
+    def toggle_eighth(self):
+        if self.eighth_toggle.get() == 0:
+            self.eighth_toggle.set(1)
+            self.eighth_button["text"] = "'+': ON"
+        else:
+            self.eighth_toggle.set(0)
+            self.eighth_button["text"] = "'+'': OFF"       
 
-    def toggle_subdivisions(self, value):
-        try:
-            new_bpm = int(self.tempo_slider.get())
-            self.bpm = new_bpm
-        except ValueError:
-            pass        #PLACEHOLDER
+    def toggle_sixteenth_e(self):
+        if self.sixteenth_e_toggle.get() == 0:
+            self.sixteenth_e_toggle.set(1)
+            self.sixteenth_e_button["text"] = "'e': ON"
+        else:
+            self.sixteenth_e_toggle.set(0)
+            self.sixteenth_e_button["text"] = "'e'': OFF"    
+
+    def toggle_sixteenth_a(self):
+        if self.sixteenth_a_toggle.get() == 0:
+            self.sixteenth_a_toggle.set(1)
+            self.sixteenth_a_button["text"] = "'a': ON"
+        else:
+            self.sixteenth_a_toggle.set(0)
+            self.sixteenth_a_button["text"] = "'a'': OFF"    
+
     
     def set_tempo(self, value):
         try:
@@ -234,24 +265,48 @@ class Metronome:
 
                 if self.accent_toggle.get() == 1:
                     if (self.beat_count * sub_beats_per_beat) % (self.beats_in_measure * sub_beats_per_beat) == 0:
+                        volume = 1.0
                         pygame.mixer.music.load(self.strong_audio_path)
                     else:
-                        if self.quarter_toggle.get() == 1 and (self.beat_count * sub_beats_per_beat) % sub_beats_per_beat == 0:
-                            pygame.mixer.music.load(self.weak_audio_path)
-                        else:
-                            pygame.mixer.music.load(self.weak_audio_path)
-                            volume = 0.0
-                else:
-                    if self.quarter_toggle.get() == 1 and (self.beat_count * sub_beats_per_beat) % sub_beats_per_beat == 0:
+                        pygame.mixer.music.load(self.strong_audio_path)
+                        volume = 0.0
+                
+                if self.quarter_toggle.get() == 1 and not ((self.beat_count * sub_beats_per_beat) % (self.beats_in_measure * sub_beats_per_beat) == 0):
+                    if (self.beat_count * sub_beats_per_beat) % sub_beats_per_beat == 0:
                         pygame.mixer.music.load(self.weak_audio_path)
+                        volume = 1.0
                     else:
                         pygame.mixer.music.load(self.weak_audio_path)
                         volume = 0.0
+                
+                if self.eighth_toggle.get() == 1:
+                    eighth_position = (self.beat_count * sub_beats_per_beat * 2) % (sub_beats_per_beat * 2)
+                    if eighth_position == 4:  # Adjust as needed
+                        pygame.mixer.music.load(self.weak_audio_path)
+                        volume = 0.15
+                    else:
+                        pass
+
+                if self.sixteenth_e_toggle.get() == 1:
+                    sixteenth_e_position = (self.beat_count * sub_beats_per_beat * 2) % (sub_beats_per_beat * 2)
+                    if sixteenth_e_position == 2:  # Adjust as needed
+                        pygame.mixer.music.load(self.weak_audio_path)
+                        volume = 0.15
+                    else:
+                        pass
+
+                if self.sixteenth_a_toggle.get() == 1:
+                    sixteenth_a_position = (self.beat_count * sub_beats_per_beat * 2) % (sub_beats_per_beat * 2)
+                    if sixteenth_a_position == 6:  # Adjust as needed
+                        pygame.mixer.music.load(self.weak_audio_path)
+                        volume = 0.15
+                    else:
+                        pass
 
                 pygame.mixer.music.set_volume(volume)
                 pygame.mixer.music.play(loops=0)
-                self.beat_count += 1
-                self.after_id = self.root.after(int(60000 / (self.bpm)), self.play_metronome)
+                self.beat_count += 0.25
+                self.after_id = self.root.after(int(15000 / (self.bpm)), self.play_metronome)
 
         except Exception as e:
             print(f"An error occurred while playing the metronome: {e}")
