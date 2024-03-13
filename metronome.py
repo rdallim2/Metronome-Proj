@@ -132,33 +132,29 @@ class Metronome:
         #-----------SUBDIVISION AND ACCENT BUTTONS
 
         self.accent_button = ttk.Button(self.mainframe, text=self.get_accent_button_text(), command=self.toggle_accent, style="Purple.TButton")
-        self.accent_button.grid(row=5, column=0, sticky=tk.W+tk.E, columnspan=2)
+        self.accent_button.grid(row=5, column=2, sticky=tk.W+tk.E, columnspan=2)
 
         self.quarter_button = ttk.Button(self.mainframe, text=self.get_quarter_button_text(), command=self.toggle_quarter, style="Purple.TButton")
-        self.quarter_button.grid(row=5, column=3, sticky=tk.W+tk.E, columnspan=2)
+        self.quarter_button.grid(row=5, column=4, sticky=tk.W+tk.E, columnspan=2)
 
         self.eighth_button = ttk.Button(self.mainframe, text=self.get_eighth_button_text(), command=self.toggle_eighth, style="Purple.TButton")
-        self.eighth_button.grid(row=5, column=7, sticky=tk.W+tk.E)
+        self.eighth_button.grid(row=5, column=6, sticky=tk.W+tk.E, columnspan=2)
 
         self.sixteenth_e_button = ttk.Button(self.mainframe, text=self.get_sixteenth_e_button_text(), command=self.toggle_sixteenth_e, style="Purple.TButton")
-        self.sixteenth_e_button.grid(row=5, column=8, sticky=tk.W+tk.E)
+        self.sixteenth_e_button.grid(row=5, column=8, sticky=tk.W+tk.E, columnspan=2)
 
         self.sixteenth_a_button = ttk.Button(self.mainframe, text=self.get_sixteenth_a_button_text(), command=self.toggle_sixteenth_a, style="Purple.TButton")
-        self.sixteenth_a_button.grid(row=5, column=9, sticky=tk.W+tk.E)
+        self.sixteenth_a_button.grid(row=5, column=10, sticky=tk.W+tk.E, columnspan=2)
         
         #-----------OTHER PAGE BUTTONS
 
         #SOUND OPTION BUTTON: ROW 1
         self.sound_options_button = ttk.Button(self.mainframe, text="Sound Options", style="SS.TButton", command=self.accent_toggle)
-        self.sound_options_button.grid(row=1, column=2, pady=10, sticky=tk.W+tk.E, columnspan=2)
+        self.sound_options_button.grid(row=1, column=3, pady=10, sticky=tk.W+tk.E, columnspan=2)
 
         # BUTTON TWO: ROW 1
         self.gap_creator_button = ttk.Button(self.mainframe, text="Gap Creator", style="SS.TButton")
-        self.gap_creator_button.grid(row=1, column=5, pady=10, sticky=tk.W+tk.E, columnspan=2)
-
-        # BUTTON THREE: ROW 1
-        self.set_list_button = ttk.Button(self.mainframe, text="Set List", style="SS.TButton")
-        self.set_list_button.grid(row=1, column=8, pady=10, sticky=tk.W+tk.E, columnspan=2)
+        self.gap_creator_button.grid(row=1, column=7, pady=10, sticky=tk.W+tk.E, columnspan=2)
 
 
         #-------------START-STOP BUTTONS
@@ -270,6 +266,9 @@ class Metronome:
                     else:
                         pygame.mixer.music.load(self.strong_audio_path)
                         volume = 0.0
+                else:
+                    pygame.mixer.music.load(self.strong_audio_path)
+                    volume = 0.0
                 
                 if self.quarter_toggle.get() == 1 and not ((self.beat_count * sub_beats_per_beat) % (self.beats_in_measure * sub_beats_per_beat) == 0):
                     if (self.beat_count * sub_beats_per_beat) % sub_beats_per_beat == 0:
