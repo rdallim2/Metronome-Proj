@@ -18,8 +18,9 @@ class Metronome:
         self.mainframe.pack(fill='both', expand=True)
 
         #ROWS AND COLUMNS
-        for i in range(12):
+        for i in range(3):
             self.mainframe.columnconfigure(i, weight=1)
+        self.mainframe.columnconfigure(3, weight=1)
 
         for i in range(12):
             self.mainframe.rowconfigure(i, weight=1)
@@ -82,7 +83,7 @@ class Metronome:
 
         #METRONOME LABEL: ROW 0
         self.text = ttk.Label(self.mainframe, text='Metronome', foreground='orange', background="gray26", font=("Brass Mono", 30))
-        self.text.grid(row=0, column=5, pady=10, columnspan=2)
+        self.text.grid(row=0, column=0, pady=10, columnspan=4)
 
         #TEMPO SLIDER
         self.tempo_slider = Scale(self.root, 
@@ -100,40 +101,40 @@ class Metronome:
         
 
         self.four_four_button = ttk.Radiobutton(self.mainframe, text="4/4", command=lambda: self.button_clicked("4/4"), style="Gray.TButton")
-        self.four_four_button.grid(row=2, column=0, columnspan=3, sticky=tk.W+tk.E)
+        self.four_four_button.grid(row=2, column=0, columnspan=1, sticky=tk.W+tk.E)
 
         self.three_four_button = ttk.Radiobutton(self.mainframe, text="3/4", command=lambda: self.button_clicked("3/4"), style="Gray.TButton")
-        self.three_four_button.grid(row=2, column=3, columnspan=3, sticky=tk.W+tk.E)
+        self.three_four_button.grid(row=2, column=1, columnspan=1, sticky=tk.W+tk.E)
 
         self.two_four_button = ttk.Radiobutton(self.mainframe, text="2/4", command=lambda: self.button_clicked("2/4"), style="Gray.TButton")
-        self.two_four_button.grid(row=2, column=6, columnspan=3, sticky=tk.W+tk.E)
+        self.two_four_button.grid(row=2, column=2, columnspan=1, sticky=tk.W+tk.E)
 
         self.five_four_button = ttk.Radiobutton(self.mainframe, text="5/4", command=lambda: self.button_clicked("5/4"), style="Gray.TButton")
-        self.five_four_button.grid(row=2, column=9, columnspan=3, sticky=tk.W+tk.E)
+        self.five_four_button.grid(row=2, column=3, columnspan=1, sticky=tk.W+tk.E)
 
         self.seven_four_button = ttk.Radiobutton(self.mainframe, text="7/4", command=lambda: self.button_clicked("7/4"), style="Gray.TButton")
-        self.seven_four_button.grid(row=3, column=0, columnspan=3, sticky=tk.W+tk.E)
+        self.seven_four_button.grid(row=3, column=0, columnspan=1, sticky=tk.W+tk.E)
 
         self.two_two_button = ttk.Radiobutton(self.mainframe, text="2/2", command=lambda: self.button_clicked("2/2"), style="Gray.TButton")
-        self.two_two_button.grid(row=3, column=3, columnspan=3, sticky=tk.W+tk.E)
+        self.two_two_button.grid(row=3, column=1, columnspan=1, sticky=tk.W+tk.E)
 
         self.six_eight_button = ttk.Radiobutton(self.mainframe, text="6/8", command=lambda: self.button_clicked("6/8"), style="Gray.TButton")
-        self.six_eight_button.grid(row=3, column=6, columnspan=3, sticky=tk.W+tk.E)
+        self.six_eight_button.grid(row=3, column=2, columnspan=1, sticky=tk.W+tk.E)
 
         self.nine_eight_button = ttk.Radiobutton(self.mainframe, text="9/8", command=lambda: self.button_clicked("9/8"), style="Gray.TButton")
-        self.nine_eight_button.grid(row=3, column=9, columnspan=3, sticky=tk.W+tk.E)
+        self.nine_eight_button.grid(row=3, column=3, columnspan=1, sticky=tk.W+tk.E)
 
         self.twelve_eight_button = ttk.Radiobutton(self.mainframe, text="12/8", command=lambda: self.button_clicked("12/8"), style="Gray.TButton")
-        self.twelve_eight_button.grid(row=4, column=0, columnspan=3, sticky=tk.W+tk.E)
+        self.twelve_eight_button.grid(row=4, column=0, columnspan=1, sticky=tk.W+tk.E)
 
         self.three_eight_button = ttk.Radiobutton(self.mainframe, text="3/8", command=lambda: self.button_clicked("3/8"), style="Gray.TButton")
-        self.three_eight_button.grid(row=4, column=3, columnspan=3, sticky=tk.W+tk.E)
+        self.three_eight_button.grid(row=4, column=1, columnspan=1, sticky=tk.W+tk.E)
 
         self.five_eight_button = ttk.Radiobutton(self.mainframe, text="5/8", command=lambda: self.button_clicked("5/8"), style="Gray.TButton")
-        self.five_eight_button.grid(row=4, column=6, columnspan=3, sticky=tk.W+tk.E)
+        self.five_eight_button.grid(row=4, column=2, columnspan=1, sticky=tk.W+tk.E)
 
         self.seven_eight_button = ttk.Radiobutton(self.mainframe, text="7/8", command=lambda: self.button_clicked("7/8"), style="Gray.TButton")
-        self.seven_eight_button.grid(row=4, column=9, columnspan=3, sticky=tk.W+tk.E)
+        self.seven_eight_button.grid(row=4, column=3, columnspan=1, sticky=tk.W+tk.E)
 
         self.set_time_sig("4/4")
         self.toggle_time_sig_buttons("4/4")
@@ -142,39 +143,39 @@ class Metronome:
         #-----------SUBDIVISION AND ACCENT BUTTONS
 
         self.accent_button = ttk.Button(self.mainframe, text=self.get_accent_button_text(), command=self.toggle_accent, style="Purple.TButton")
-        self.accent_button.grid(row=5, column=2, sticky=tk.W+tk.E, columnspan=2)
+        self.accent_button.grid(row=5, column=0, sticky=tk.W+tk.E, columnspan=4)
 
         self.quarter_button = ttk.Button(self.mainframe, text=self.get_quarter_button_text(), command=self.toggle_quarter, style="Purple.TButton")
-        self.quarter_button.grid(row=5, column=4, sticky=tk.W+tk.E, columnspan=2)
+        self.quarter_button.grid(row=6, column=0, sticky=tk.W+tk.E, columnspan=1)
 
         self.eighth_button = ttk.Button(self.mainframe, text=self.get_eighth_button_text(), command=self.toggle_eighth, style="Purple.TButton")
-        self.eighth_button.grid(row=5, column=6, sticky=tk.W+tk.E, columnspan=2)
+        self.eighth_button.grid(row=6, column=1, sticky=tk.W+tk.E, columnspan=1)
 
         self.sixteenth_e_button = ttk.Button(self.mainframe, text=self.get_sixteenth_e_button_text(), command=self.toggle_sixteenth_e, style="Purple.TButton")
-        self.sixteenth_e_button.grid(row=5, column=8, sticky=tk.W+tk.E, columnspan=2)
+        self.sixteenth_e_button.grid(row=6, column=2, sticky=tk.W+tk.E, columnspan=1)
 
         self.sixteenth_a_button = ttk.Button(self.mainframe, text=self.get_sixteenth_a_button_text(), command=self.toggle_sixteenth_a, style="Purple.TButton")
-        self.sixteenth_a_button.grid(row=5, column=10, sticky=tk.W+tk.E, columnspan=2)
+        self.sixteenth_a_button.grid(row=6, column=3, sticky=tk.W+tk.E, columnspan=1)
         
         #-----------OTHER PAGE BUTTONS
 
         #SOUND OPTION BUTTON: ROW 1
         self.sound_options_button = ttk.Button(self.mainframe, text="Sound Options", style="SS.TButton", command=self.accent_toggle)
-        self.sound_options_button.grid(row=1, column=3, pady=10, sticky=tk.W+tk.E, columnspan=2)
+        self.sound_options_button.grid(row=1, column=0, pady=10, sticky=tk.W+tk.E, columnspan=1)
 
         # BUTTON TWO: ROW 1
         self.gap_creator_button = ttk.Button(self.mainframe, text="Gap Creator", style="SS.TButton")
-        self.gap_creator_button.grid(row=1, column=7, pady=10, sticky=tk.W+tk.E, columnspan=2)
+        self.gap_creator_button.grid(row=1, column=2, pady=10, sticky=tk.W+tk.E, columnspan=1)
 
 
         #-------------START-STOP BUTTONS
         #START BUTTON: ROW 6
         self.start_button = ttk.Button(self.mainframe, text="Start", command=self.start_metronome, style="SS.TButton")
-        self.start_button.grid(row=6, column=3, pady=10, columnspan=2, sticky=tk.W+tk.E)
+        self.start_button.grid(row=7, column=0, pady=10, columnspan=1, sticky=tk.W+tk.E)
 
         #STOP BUTTON: ROW 6
         self.stop_button = ttk.Button(self.mainframe, text="Stop", command=self.stop_metronome, style="SS.TButton")
-        self.stop_button.grid(row=6, column=7, pady=10, columnspan=2, sticky=tk.W+tk.E)
+        self.stop_button.grid(row=7, column=2, pady=10, columnspan=1, sticky=tk.W+tk.E)
         #INITIALIZER
         pygame.mixer.init()
 
