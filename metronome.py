@@ -38,7 +38,10 @@ class Metronome:
             ) 
 
         self.style.configure("Green.TButton", 
-            background="SpringGreen3")
+            background="SpringGreen2")
+
+        self.style.configure("Gray.TButton",
+            background="mint cream")
 
         self.style.configure("Purple.TButton",
             background="MediumPurple3")
@@ -50,8 +53,12 @@ class Metronome:
         self.weak_audio_path = "/Users/ryandallimore/persprojects/metronome_proj/met_sound.mp3"
         self.strong_audio_path = "/Users/ryandallimore/persprojects/metronome_proj/strongbeat.mp3"
         
+        self.selection = tk.StringVar(value="4/4")
         self.beat_count = 0
-        self.beats_in_measure = 4 
+        self.beats_in_measure = 4
+        self.numerator = 4
+        self.denominator = 4
+        self.sub_size = 4
         self.after_id = None  # To store the after event ID
 
         #-----------TIME-SIG TOGGLES
@@ -92,41 +99,44 @@ class Metronome:
         #-----------TIME SIGNATURE BUTTONS
         
 
-        self.four_four_button = ttk.Button(self.mainframe, text="4/4", command=lambda: self.set_time_sig("4/4"), style="Green.TButton")
+        self.four_four_button = ttk.Radiobutton(self.mainframe, text="4/4", command=lambda: self.button_clicked("4/4"), style="Gray.TButton")
         self.four_four_button.grid(row=2, column=0, columnspan=3, sticky=tk.W+tk.E)
 
-        self.three_four_button = ttk.Button(self.mainframe, text="3/4", command=lambda: self.set_time_sig("3/4"), style="Green.TButton")
+        self.three_four_button = ttk.Radiobutton(self.mainframe, text="3/4", command=lambda: self.button_clicked("3/4"), style="Gray.TButton")
         self.three_four_button.grid(row=2, column=3, columnspan=3, sticky=tk.W+tk.E)
 
-        self.two_four_button = ttk.Button(self.mainframe, text="2/4", command=lambda: self.set_time_sig("2/4"), style="Green.TButton")
+        self.two_four_button = ttk.Radiobutton(self.mainframe, text="2/4", command=lambda: self.button_clicked("2/4"), style="Gray.TButton")
         self.two_four_button.grid(row=2, column=6, columnspan=3, sticky=tk.W+tk.E)
 
-        self.five_four_button = ttk.Button(self.mainframe, text="5/4", command=lambda: self.set_time_sig("5/4"), style="Green.TButton")
+        self.five_four_button = ttk.Radiobutton(self.mainframe, text="5/4", command=lambda: self.button_clicked("5/4"), style="Gray.TButton")
         self.five_four_button.grid(row=2, column=9, columnspan=3, sticky=tk.W+tk.E)
 
-        self.seven_four_button = ttk.Button(self.mainframe, text="7/4", command=lambda: self.set_time_sig("7/4"), style="Green.TButton")
+        self.seven_four_button = ttk.Radiobutton(self.mainframe, text="7/4", command=lambda: self.button_clicked("7/4"), style="Gray.TButton")
         self.seven_four_button.grid(row=3, column=0, columnspan=3, sticky=tk.W+tk.E)
 
-        self.two_two_button = ttk.Button(self.mainframe, text="2/2", command=lambda: self.set_time_sig("2/2"), style="Green.TButton")
+        self.two_two_button = ttk.Radiobutton(self.mainframe, text="2/2", command=lambda: self.button_clicked("2/2"), style="Gray.TButton")
         self.two_two_button.grid(row=3, column=3, columnspan=3, sticky=tk.W+tk.E)
 
-        self.six_eight_button = ttk.Button(self.mainframe, text="6/8", command=lambda: self.set_time_sig("6/8"), style="Green.TButton")
+        self.six_eight_button = ttk.Radiobutton(self.mainframe, text="6/8", command=lambda: self.button_clicked("6/8"), style="Gray.TButton")
         self.six_eight_button.grid(row=3, column=6, columnspan=3, sticky=tk.W+tk.E)
 
-        self.nine_eight_button = ttk.Button(self.mainframe, text="9/8", command=lambda: self.set_time_sig("9/8"), style="Green.TButton")
+        self.nine_eight_button = ttk.Radiobutton(self.mainframe, text="9/8", command=lambda: self.button_clicked("9/8"), style="Gray.TButton")
         self.nine_eight_button.grid(row=3, column=9, columnspan=3, sticky=tk.W+tk.E)
 
-        self.twelve_eight_button = ttk.Button(self.mainframe, text="12/8", command=lambda: self.set_time_sig("12/8"), style="Green.TButton")
+        self.twelve_eight_button = ttk.Radiobutton(self.mainframe, text="12/8", command=lambda: self.button_clicked("12/8"), style="Gray.TButton")
         self.twelve_eight_button.grid(row=4, column=0, columnspan=3, sticky=tk.W+tk.E)
 
-        self.three_eight_button = ttk.Button(self.mainframe, text="3/8", command=lambda: self.set_time_sig("3/8"), style="Green.TButton")
+        self.three_eight_button = ttk.Radiobutton(self.mainframe, text="3/8", command=lambda: self.button_clicked("3/8"), style="Gray.TButton")
         self.three_eight_button.grid(row=4, column=3, columnspan=3, sticky=tk.W+tk.E)
 
-        self.five_eight_button = ttk.Button(self.mainframe, text="5/8", command=lambda: self.set_time_sig("5/8"), style="Green.TButton")
+        self.five_eight_button = ttk.Radiobutton(self.mainframe, text="5/8", command=lambda: self.button_clicked("5/8"), style="Gray.TButton")
         self.five_eight_button.grid(row=4, column=6, columnspan=3, sticky=tk.W+tk.E)
 
-        self.seven_eight_button = ttk.Button(self.mainframe, text="7/8", command=lambda: self.set_time_sig("7/8"), style="Green.TButton")
+        self.seven_eight_button = ttk.Radiobutton(self.mainframe, text="7/8", command=lambda: self.button_clicked("7/8"), style="Gray.TButton")
         self.seven_eight_button.grid(row=4, column=9, columnspan=3, sticky=tk.W+tk.E)
+
+        self.set_time_sig("4/4")
+        self.toggle_time_sig_buttons("4/4")
 
 
         #-----------SUBDIVISION AND ACCENT BUTTONS
@@ -174,6 +184,7 @@ class Metronome:
     #----------------------------------FUNCTIONS-----------------------------------------------------------------------
     
     #------------------- TIME-SIG BUTTON TEXT CHANGE FUNCTIONS
+    
     def get_accent_button_text(self):
         return "Strong Accent" if self.accent_toggle.get() == 1 else "No Accent"
 
@@ -188,7 +199,7 @@ class Metronome:
 
     def get_sixteenth_a_button_text(self):
         return "'a': ON " if self.sixteenth_a_toggle.get() == 1 else "'a': OFF"
-
+    
 
 
     def toggle_accent(self):
@@ -231,6 +242,13 @@ class Metronome:
             self.sixteenth_a_toggle.set(0)
             self.sixteenth_a_button["text"] = "'a'': OFF"    
 
+    #----------------TEMPO AND TIME SIG STUFF
+
+    def button_clicked(self, button_text):
+        self.stop_metronome()
+        self.set_time_sig(button_text)
+        self.toggle_time_sig_buttons(button_text)
+
     
     def set_tempo(self, value):
         try:
@@ -239,16 +257,50 @@ class Metronome:
         except ValueError:
             pass
 
+    def toggle_time_sig_buttons(self, selected_button):
+        time_sig_buttons = {       
+            "4/4": self.four_four_button,
+            "3/4": self.three_four_button,
+            "2/4": self.two_four_button,
+            "5/4": self.five_four_button,
+            "7/4": self.seven_four_button,
+            "2/2": self.two_two_button,
+            "6/8": self.six_eight_button,
+            "9/8": self.nine_eight_button,
+            "12/8": self.twelve_eight_button,
+            "3/8": self.three_eight_button,
+            "5/8": self.five_eight_button,
+            "7/8": self.seven_eight_button,
+        }
+
+
+        # Disable all time signature buttons
+        for button_text, button in time_sig_buttons.items():
+            if button_text == selected_button:
+                button.config(style="Green.TButton", state="normal")
+            else:
+                button.config(style="Gray.TButton", state="normal")
+
+
+
     def set_time_sig(self, value):
         try:
-            time_sig_input = int(self.time_sig_entry.get())
-            time_sig = Fraction(time_sig_input)
+            time_sig = Fraction(value)
 
             numerator = time_sig.numerator
             denominator = time_sig.denominator
 
-
-            self.beats_in_measure = time_sig_input
+            if denominator == 2:
+                self.beats_in_measure = 4
+                self.beat_count = (self.beats_in_measure - 0.25)
+            elif denominator == 4:
+                self.beats_in_measure = numerator
+                self.beat_count = (self.beats_in_measure - 0.25)
+            elif denominator == 8:
+                self.beats_in_measure = (numerator / 2)
+                self.beat_count = (self.beats_in_measure - 0.25)
+            else:
+                pass
         except ValueError:
             pass
 
@@ -304,7 +356,10 @@ class Metronome:
 
                 pygame.mixer.music.set_volume(volume)
                 pygame.mixer.music.play(loops=0)
-                self.beat_count += 0.25
+                if self.beat_count < self.beats_in_measure:
+                    self.beat_count += 0.25
+                else:
+                    self.beat_count = 0.25
                 self.after_id = self.root.after(int(15000 / (self.bpm)), self.play_metronome)
 
         except Exception as e:
@@ -316,13 +371,10 @@ class Metronome:
         if not self.playing:
             self.playing = True
             self.play_metronome()
-            self.metronome_thread = threading.Thread(target=self.play_metronome)
-            self.metronome_thread.start()
 
     def stop_metronome(self):
         if self.playing:
             self.playing = False
-            self.beat_count = 0
             if self.after_id is not None:
                 self.root.after_cancel(self.after_id)
                 self.after_id = None
