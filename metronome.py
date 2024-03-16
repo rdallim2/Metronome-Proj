@@ -5,6 +5,7 @@ import pygame
 from tkinter import *
 from PIL import ImageTk, Image
 import customtkinter
+import time
 
 class Metronome:
     def __init__(self):
@@ -61,6 +62,36 @@ class Metronome:
         self.denominator = 4
         self.sub_size = 4
         self.after_id = None  # To store the after event ID
+        self.selected_gap_size = 0
+
+        #-----------SOUND OPTIONS
+
+        self.sound_options = [
+            {"label": "Beep", "audio": "/Users/ryandallimore/persprojects/metronome_proj/met_sound.mp3"},
+            {"label": "Woodblock", "audio": "/Users/ryandallimore/persprojects/metronome_proj/woodblock.mp3"},
+            {"label": "Ding", "audio": "/Users/ryandallimore/persprojects/metronome_proj/bell.mp3"},
+            {"label": "Tock", "audio": "/Users/ryandallimore/persprojects/metronome_proj/quartz.mp3"},
+        ]
+        self.selected_strong_beat = tk.StringVar(value = self.sound_options[0]["label"])
+        self.selected_weak_beat = tk.StringVar(value = self.sound_options[0]["label"])
+
+        self.strong_beat_dropdown = ttk.Combobox(self.mainframe, textvariable=self.selected_strong_beat, values=[option["label"] for option in self.sound_options])
+        self.strong_beat_dropdown.grid(row=1, column=0, pady=10, sticky=tk.W+tk.E, columnspan=1)
+        self.strong_beat_dropdown.bind("<<ComboboxSelected>>", self.change_strong_option)
+
+        self.weak_beat_dropdown = ttk.Combobox(self.mainframe, textvariable=self.selected_weak_beat, values=[option["label"] for option in self.sound_options])
+        self.weak_beat_dropdown.grid(row=1, column=1, pady=10, sticky=tk.W+tk.E, columnspan=1)
+        self.weak_beat_dropdown.bind("<<ComboboxSelected>>", self.change_weak_option)
+
+
+        #-----------GP CREATOR
+
+        self.gap_options = ["0 bars", "1 bar","2 bars", "4 bars", "8 bars"]
+        self.selected_gap_option = tk.StringVar(value=self.gap_options[0])
+
+        self.gap_dropdown = ttk.Combobox(self.mainframe, textvariable=self.selected_gap_option, values=self.gap_options)
+        self.gap_dropdown.grid(row=1, column=2, columnspan=2, pady=10, sticky=tk.W+tk.E)
+        self.gap_dropdown.bind("<<ComboboxSelected>>", self.update_selected_gap)
 
         #-----------TIME-SIG TOGGLES
 
@@ -157,25 +188,15 @@ class Metronome:
         self.sixteenth_a_button = ttk.Button(self.mainframe, text=self.get_sixteenth_a_button_text(), command=self.toggle_sixteenth_a, style="Purple.TButton")
         self.sixteenth_a_button.grid(row=6, column=3, sticky=tk.W+tk.E, columnspan=1)
         
-        #-----------OTHER PAGE BUTTONS
-
-        #SOUND OPTION BUTTON: ROW 1
-        self.sound_options_button = ttk.Button(self.mainframe, text="Sound Options", style="SS.TButton", command=self.accent_toggle)
-        self.sound_options_button.grid(row=1, column=0, pady=10, sticky=tk.W+tk.E, columnspan=1)
-
-        # BUTTON TWO: ROW 1
-        self.gap_creator_button = ttk.Button(self.mainframe, text="Gap Creator", style="SS.TButton")
-        self.gap_creator_button.grid(row=1, column=2, pady=10, sticky=tk.W+tk.E, columnspan=1)
-
 
         #-------------START-STOP BUTTONS
         #START BUTTON: ROW 6
         self.start_button = ttk.Button(self.mainframe, text="Start", command=self.start_metronome, style="SS.TButton")
-        self.start_button.grid(row=7, column=0, pady=10, columnspan=1, sticky=tk.W+tk.E)
+        self.start_button.grid(row=7, column=0, pady=10, columnspan=2, sticky=tk.W+tk.E)
 
         #STOP BUTTON: ROW 6
         self.stop_button = ttk.Button(self.mainframe, text="Stop", command=self.stop_metronome, style="SS.TButton")
-        self.stop_button.grid(row=7, column=2, pady=10, columnspan=1, sticky=tk.W+tk.E)
+        self.stop_button.grid(row=7, column=2, pady=10, columnspan=2, sticky=tk.W+tk.E)
         #INITIALIZER
         pygame.mixer.init()
 
@@ -184,6 +205,24 @@ class Metronome:
 
     #----------------------------------FUNCTIONS-----------------------------------------------------------------------
     
+    #-------------------SOUND OPTIONS 
+
+    def change_strong_option(self, event):
+        selected_option_label = self.selected_strong_option.get()
+        for option in self.sound_options:
+            if option["label"] == selected_option_label:
+                self.strong_audio_path = option["audio"]
+
+    def change_weak_option(self, event):
+        selected_option_label = self.selected_weak_option.get()
+        for option in self.sound_options:
+            if option["label"] == selected_option_label:
+                self.weak_audio_path = option["audio"]
+
+    def update_selected_gap(self, event):
+        selected_gap = int(self.selected_gap_option.get().split()[0])  # Extract the numerical part
+        self.selected_gap_size = selected_gap
+
     #------------------- TIME-SIG BUTTON TEXT CHANGE FUNCTIONS
     
     def get_accent_button_text(self):
@@ -312,6 +351,17 @@ class Metronome:
                 volume = 1.0
                 sub_beats_per_beat = 4  # Adjust this based on your requirement
 
+                selected_strong_option_label = self.selected_strong_beat.get()
+                selected_weak_option_label = self.selected_weak_beat.get()
+
+                # Find the selected options in the sound options list
+                for option in self.sound_options:
+                    if option["label"] == selected_strong_option_label:
+                        self.strong_audio_path = option["audio"]
+                    if option["label"] == selected_weak_option_label:
+                        self.weak_audio_path = option["audio"]
+
+
                 if self.accent_toggle.get() == 1:
                     if (self.beat_count * sub_beats_per_beat) % (self.beats_in_measure * sub_beats_per_beat) == 0:
                         volume = 1.0
@@ -326,7 +376,7 @@ class Metronome:
                 if self.quarter_toggle.get() == 1 and not ((self.beat_count * sub_beats_per_beat) % (self.beats_in_measure * sub_beats_per_beat) == 0):
                     if (self.beat_count * sub_beats_per_beat) % sub_beats_per_beat == 0:
                         pygame.mixer.music.load(self.weak_audio_path)
-                        volume = 1.0
+                        volume = 0.5
                     else:
                         pygame.mixer.music.load(self.weak_audio_path)
                         volume = 0.0
@@ -360,8 +410,10 @@ class Metronome:
                 if self.beat_count < self.beats_in_measure:
                     self.beat_count += 0.25
                 else:
+                    pygame.time.delay(self.selected_gap_size * self.beats_in_measure * (int(15000 / (self.bpm))* self.beats_in_measure -1))
                     self.beat_count = 0.25
                 self.after_id = self.root.after(int(15000 / (self.bpm)), self.play_metronome)
+
 
         except Exception as e:
             print(f"An error occurred while playing the metronome: {e}")
